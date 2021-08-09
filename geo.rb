@@ -7,6 +7,7 @@ def store_to_redis(nickname, request)
   remote_ip = request['REMOTE_ADDR']
   remote_ip = '5.173.252.128' if remote_ip == '::1' or remote_ip == '127.0.0.1'
   remote_ip = remote_ip.gsub(/::ffff:/, '')
+  puts remote_ip
   reader = MaxMind::GeoIP2::Reader.new('./GeoLite2-City.mmdb')
   record = reader.city(remote_ip)
   reader = MaxMind::GeoIP2::Reader.new('./GeoLite2-ASN.mmdb')
