@@ -18,7 +18,7 @@ end
 
 configure do
   set :environment, :production
-  set :bind, '0.0.0.0'
+  set :bind, '::'
   set :port, 80 unless development?
   set :server, 'thin'
 end
