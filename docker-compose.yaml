@@ -1,0 +1,10 @@
+services:
+  geo:
+    build: .
+    command: bash -c "ruby geo.rb"
+    volumes:
+      - .:/app
+    ports:
+      - "80:80"
+#    depends_on:
+#      - db
