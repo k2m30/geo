@@ -1,0 +1,51 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Инструкция</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col s12">
+      <h4>User ID: <%= @user_id %></h4>
+      <% @stats.each_pair do |_, record| %>
+        <p>
+        <table>
+          <thead>
+          <tr>
+            <th>Visits</th>
+            <th>City</th>
+            <th>Map url</th>
+            <th>IP</th>
+            <th>Agent</th>
+            <th>ASN</th>
+            <th>Possible provider</th>
+            <th>Network</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td><%= record[:visits] %></td>
+            <td><%= record[:info][:city] %> <%= record[:info][:district] %></td>
+            <td><a href="<%= record[:info][:url] %>" target="_blank">Link</a> </td>
+            <td><%= record[:info][:remote_ip] %></td>
+            <td><%= record[:info][:agent] %></td>
+            <td><%= record[:info][:asn] %></td>
+            <td><%= record[:info][:asn_org] %></td>
+            <td><%= record[:info][:asn_network] %></td>
+          </tr>
+          </tbody>
+        </table>
+        </p>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
