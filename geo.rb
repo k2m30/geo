@@ -18,8 +18,8 @@ def store_to_redis(user_id, request)
   asn = reader.asn(remote_ip)
   info = {
     agent: request['HTTP_USER_AGENT'],
-    city: record.city&.names&.[]('ru'),
-    district: record.most_specific_subdivision&.names&.[]('ru'),
+    city: record.city&.names&.[]('en'),
+    district: record.most_specific_subdivision&.names&.[]('en'),
     url: "https://www.google.com/maps/place/#{record.location&.latitude},#{record.location&.longitude}",
     remote_ip: remote_ip,
     asn: asn.autonomous_system_number,
@@ -61,7 +61,7 @@ get '/' do
 end
 
 get '/u/:user_id' do
-  JSON[Redis.new.get(params['user_id']&.gsub('@', '')), symbolize_names: true]
-rescue StandardError
-  'Not found'
+  @user_id = params['user_id']&.gsub('@', '')
+  @stats = JSON[Redis.new.get(@user_id), symbolize_names: true] rescue {hash: {info: {}, visits: 0}}
+  erb :'stats.html', {locals: {user_id: @user_id, stats: @stats}}
 end
