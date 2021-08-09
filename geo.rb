@@ -62,6 +62,7 @@ end
 
 get '/u/:user_id' do
   @user_id = params['user_id']&.gsub('@', '')
-  @stats = JSON[Redis.new.get(@user_id), symbolize_names: true] rescue {hash: {info: {}, visits: 0}}
+  @stats = JSON[Redis.new.get(@user_id), symbolize_names: true]
+  @stats = {hash: {info: {}, visits: 0}} if @stats == 'null'
   erb :'stats.html', {locals: {user_id: @user_id, stats: @stats}}
 end
