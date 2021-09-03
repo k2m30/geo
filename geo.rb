@@ -60,14 +60,36 @@ get '/' do
 end
 
 get '/:user_id' do
+  redis = Redis.new
   user_id = params['user_id']
-  store_to_redis(user_id, request.env)
-  erb :'index.html', format: :html5, locals: { user_id: user_id }
+  users = JSON[redis.get('users') || '[]']
+  if users.include? user_id
+    store_to_redis(user_id, request.env)
+    erb :'index.html', format: :html5, locals: { user_id: user_id }
+  else
+    status 404
+    body 'nothing is here'
+  end
+end
+
+get '/new/:user_id' do
+  redis = Redis.new
+  users = JSON[redis.get('users') || '[]']
+  users = users.insert(-1, params['user_id']).compact.uniq
+  redis.set('users', users)
 end
 
 get '/u/:user_id' do
-  @user_id = params['user_id']&.gsub('@', '')
-  @stats = JSON[Redis.new.get(@user_id), symbolize_names: true]
-  @stats = { hash: { info: {}, visits: 0 } } if @stats == 'null'
-  erb :'stats.html', { locals: { user_id: @user_id, stats: @stats } }
+  redis = Redis.new
+  user_id = params['user_id']
+  users = JSON[redis.get('users') || '[]']
+  if users.include? user_id
+    @user_id = params['user_id']&.gsub('@', '')
+    @stats = JSON[redis.get(@user_id), symbolize_names: true]
+    @stats = { hash: { info: {}, visits: 0 } } if @stats == 'null'
+    erb :'stats.html', { locals: { user_id: @user_id, stats: @stats } }
+  else
+    status 404
+    body 'nothing is here'
+  end
 end
