@@ -55,14 +55,19 @@ configure do
 end
 
 get '/' do
-  user_id = params['u'] || '12345'
+  status 404
+  body 'nothing is here'
+end
+
+get '/:user_id' do
+  user_id = params['user_id']
   store_to_redis(user_id, request.env)
-  erb :'index.html', format: :html5
+  erb :'index.html', format: :html5, locals: { uid: user_id }
 end
 
 get '/u/:user_id' do
   @user_id = params['user_id']&.gsub('@', '')
   @stats = JSON[Redis.new.get(@user_id), symbolize_names: true]
-  @stats = {hash: {info: {}, visits: 0}} if @stats == 'null'
-  erb :'stats.html', {locals: {user_id: @user_id, stats: @stats}}
+  @stats = { hash: { info: {}, visits: 0 } } if @stats == 'null'
+  erb :'stats.html', { locals: { user_id: @user_id, stats: @stats } }
 end
