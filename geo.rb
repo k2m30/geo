@@ -62,7 +62,7 @@ end
 get '/:user_id' do
   user_id = params['user_id']
   store_to_redis(user_id, request.env)
-  erb :'index.html', format: :html5, locals: { uid: user_id }
+  erb :'index.html', format: :html5, locals: { user_id: user_id }
 end
 
 get '/u/:user_id' do
